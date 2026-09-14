@@ -4,17 +4,13 @@ import CaseStudies from "@/components/case-studies/CaseStudies";
 import Audit from "@/components/audit/Audit";
 import Insights from "@/components/insights/Insights";
 
-export default function Home() {
+export default function EnglishHomePage() {
   return (
     <main>
       <Hero />
-
       <Impact />
-
       <CaseStudies />
-
       <Audit />
-
       <Insights />
     </main>
   );
