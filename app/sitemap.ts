@@ -159,10 +159,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // 🇬🇧 EN ROOT
     // =========================
 
-    {
-      url: `${baseUrl}/en`,
-      changeFrequency: "weekly",
-      priority: 1,
-    },
+   
   ];
 }

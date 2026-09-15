@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+
 import {
   ArrowRight,
   Check,
@@ -9,13 +10,17 @@ import {
   Target,
 } from "lucide-react";
 
-export const metadata: Metadata = {
-  title: "Acquisition client",
-  description:
-    "Construisez un système d’acquisition client prévisible grâce à la publicité, la visibilité dans les moteurs de recherche, le retargeting et l’analyse des performances.",
-};
+import { createLocalizedMetadata } from "@/lib/seo";
 
-export default function FrenchAcquisitionPage() {
+export const metadata: Metadata = createLocalizedMetadata({
+  title: "Customer Acquisition",
+  description:
+    "Build a predictable customer acquisition system through paid advertising, search visibility, retargeting and performance analysis.",
+  path: "/solutions/acquisition",
+  french: false,
+});
+
+export default function AcquisitionPage() {
   return (
     <main className="min-h-screen bg-white text-[#0b2454]">
       {/* HERO */}
@@ -26,36 +31,36 @@ export default function FrenchAcquisitionPage() {
             <div>
               <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-cyan-200 bg-cyan-50 px-4 py-2 text-sm font-semibold text-cyan-600">
                 <span className="h-2 w-2 rounded-full bg-cyan-500" />
-                ACQUISITION CLIENT
+                CUSTOMER ACQUISITION
               </div>
 
               <h1 className="text-5xl font-extrabold leading-tight tracking-tight md:text-6xl">
-                Générez des{" "}
+                Generate{" "}
                 <span className="block text-cyan-500">
-                  clients qualifiés.
+                  qualified customers.
                 </span>
               </h1>
 
               <p className="mt-7 max-w-2xl text-lg leading-8 text-slate-600">
-                Construisez un système d’acquisition client prévisible qui
-                attire la bonne audience, génère une demande qualifiée et
-                transforme votre trafic en clients.
+                Build a predictable customer acquisition system that attracts
+                the right audience, generates qualified demand and turns your
+                traffic into customers.
               </p>
 
               <div className="mt-9 flex flex-wrap gap-4">
                 <Link
-                  href="/fr#audit"
+                  href="/#audit"
                   className="inline-flex items-center gap-3 rounded-xl bg-[#0b2454] px-6 py-4 font-bold text-white shadow-lg transition hover:bg-cyan-500"
                 >
-                  Obtenir un audit gratuit
+                  Get a free audit
                   <ArrowRight size={18} />
                 </Link>
 
                 <Link
-                  href="/fr/solutions"
+                  href="/solutions"
                   className="inline-flex items-center gap-3 rounded-xl border border-slate-300 bg-white px-6 py-4 font-bold text-[#0b2454] transition hover:border-cyan-400 hover:text-cyan-500"
                 >
-                  Voir comment ça marche
+                  See how it works
                   <ArrowRight size={18} />
                 </Link>
               </div>
@@ -71,12 +76,10 @@ export default function FrenchAcquisitionPage() {
                       size={32}
                     />
 
-                    <p className="text-3xl font-extrabold">
-                      +184%
-                    </p>
+                    <p className="text-3xl font-extrabold">+184%</p>
 
                     <p className="mt-2 text-sm text-slate-300">
-                      Trafic
+                      Traffic
                     </p>
                   </div>
 
@@ -86,12 +89,10 @@ export default function FrenchAcquisitionPage() {
                       size={32}
                     />
 
-                    <p className="text-3xl font-extrabold">
-                      +127%
-                    </p>
+                    <p className="text-3xl font-extrabold">+127%</p>
 
                     <p className="mt-2 text-sm text-slate-500">
-                      Leads qualifiés
+                      Qualified leads
                     </p>
                   </div>
 
@@ -101,12 +102,10 @@ export default function FrenchAcquisitionPage() {
                       size={32}
                     />
 
-                    <p className="text-3xl font-extrabold">
-                      -34%
-                    </p>
+                    <p className="text-3xl font-extrabold">-34%</p>
 
                     <p className="mt-2 text-sm text-slate-500">
-                      Coût d’acquisition
+                      Acquisition cost
                     </p>
                   </div>
 
@@ -116,12 +115,10 @@ export default function FrenchAcquisitionPage() {
                       size={32}
                     />
 
-                    <p className="text-3xl font-extrabold">
-                      +49%
-                    </p>
+                    <p className="text-3xl font-extrabold">+49%</p>
 
                     <p className="mt-2 text-sm text-slate-500">
-                      Chiffre d’affaires
+                      Revenue
                     </p>
                   </div>
                 </div>
@@ -136,17 +133,16 @@ export default function FrenchAcquisitionPage() {
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="max-w-3xl">
             <p className="text-sm font-bold uppercase tracking-[0.3em] text-cyan-500">
-              Canaux d’acquisition
+              Acquisition channels
             </p>
 
             <h2 className="mt-4 text-4xl font-extrabold md:text-5xl">
-              Atteignez vos clients là où ils recherchent.
+              Reach your customers where they are searching.
             </h2>
 
             <p className="mt-6 text-lg leading-8 text-slate-600">
-              Nous combinons acquisition payante, visibilité dans les moteurs
-              de recherche et retargeting pour créer un moteur d’acquisition
-              complet.
+              We combine paid acquisition, search visibility and retargeting
+              to create a complete customer acquisition engine.
             </p>
           </div>
 
@@ -154,37 +150,37 @@ export default function FrenchAcquisitionPage() {
             <AcquisitionCard
               icon={<Megaphone size={30} />}
               title="Meta Ads"
-              description="Atteignez votre audience idéale grâce à des campagnes publicitaires ciblées."
+              description="Reach your ideal audience through targeted advertising campaigns."
             />
 
             <AcquisitionCard
               icon={<Search size={30} />}
               title="Google Ads"
-              description="Capturez les recherches à forte intention et générez un trafic qualifié."
+              description="Capture high-intent searches and generate qualified traffic."
             />
 
             <AcquisitionCard
               icon={<Target size={30} />}
               title="TikTok Ads"
-              description="Atteignez de nouvelles audiences grâce à des campagnes créatives orientées performance."
+              description="Reach new audiences through creative, performance-driven campaigns."
             />
 
             <AcquisitionCard
               icon={<Search size={30} />}
               title="ChatGPT Ads"
-              description="Préparez votre stratégie d’acquisition pour la découverte propulsée par l’IA."
+              description="Prepare your acquisition strategy for AI-powered discovery."
             />
 
             <AcquisitionCard
               icon={<Target size={30} />}
               title="Retargeting"
-              description="Reconnectez-vous avec vos visiteurs et transformez les opportunités manquées en clients."
+              description="Reconnect with your visitors and turn missed opportunities into customers."
             />
 
             <AcquisitionCard
               icon={<BarChart3 size={30} />}
-              title="Analyse des performances"
-              description="Mesurez votre trafic, vos leads, vos coûts d’acquisition et votre chiffre d’affaires."
+              title="Performance Analytics"
+              description="Measure your traffic, leads, acquisition costs and revenue."
             />
           </div>
         </div>
@@ -195,31 +191,31 @@ export default function FrenchAcquisitionPage() {
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="text-center">
             <p className="text-sm font-bold uppercase tracking-[0.3em] text-cyan-500">
-              Notre processus
+              Our process
             </p>
 
             <h2 className="mt-4 text-4xl font-extrabold md:text-5xl">
-              Du trafic aux clients.
+              From traffic to customers.
             </h2>
           </div>
 
           <div className="mt-16 grid gap-8 md:grid-cols-3">
             <ProcessStep
               number="01"
-              title="Analyser"
-              text="Comprenez votre marché, votre audience et vos opportunités d’acquisition."
+              title="Analyze"
+              text="Understand your market, your audience and your acquisition opportunities."
             />
 
             <ProcessStep
               number="02"
-              title="Attirer"
-              text="Lancez des campagnes d’acquisition qui génèrent des visiteurs qualifiés."
+              title="Attract"
+              text="Launch acquisition campaigns that generate qualified visitors."
             />
 
             <ProcessStep
               number="03"
-              title="Convertir"
-              text="Optimisez le parcours client pour transformer le trafic en leads et en clients."
+              title="Convert"
+              text="Optimize the customer journey to turn traffic into leads and customers."
             />
           </div>
         </div>
@@ -231,25 +227,25 @@ export default function FrenchAcquisitionPage() {
           <div className="grid gap-16 lg:grid-cols-2 lg:items-center">
             <div>
               <p className="text-sm font-bold uppercase tracking-[0.3em] text-cyan-500">
-                Pourquoi Bringo
+                Why Bringo
               </p>
 
               <h2 className="mt-4 text-4xl font-extrabold md:text-5xl">
-                Une acquisition pensée autour d’une croissance mesurable.
+                Acquisition built around measurable growth.
               </h2>
 
               <p className="mt-6 text-lg leading-8 text-slate-600">
-                Chaque campagne est connectée à vos objectifs business, du
-                premier clic jusqu’au client final.
+                Every campaign is connected to your business objectives, from
+                the first click to the final customer.
               </p>
             </div>
 
             <div className="space-y-5">
-              <Benefit text="Du trafic qualifié plutôt que des clics sans valeur" />
-              <Benefit text="Une optimisation des campagnes basée sur les données" />
-              <Benefit text="Un suivi clair des performances d’acquisition" />
-              <Benefit text="Des stratégies payantes et organiques connectées" />
-              <Benefit text="Une optimisation continue de la conversion" />
+              <Benefit text="Qualified traffic instead of low-value clicks" />
+              <Benefit text="Data-driven campaign optimization" />
+              <Benefit text="Clear acquisition performance tracking" />
+              <Benefit text="Connected paid and organic strategies" />
+              <Benefit text="Continuous conversion optimization" />
             </div>
           </div>
         </div>
@@ -259,19 +255,19 @@ export default function FrenchAcquisitionPage() {
       <section className="px-6 pb-24 lg:px-8">
         <div className="mx-auto max-w-7xl overflow-hidden rounded-3xl bg-[#0b2454] px-8 py-16 text-center text-white md:px-16">
           <h2 className="text-4xl font-extrabold md:text-5xl">
-            Prêt à améliorer votre acquisition ?
+            Ready to improve your acquisition?
           </h2>
 
           <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-slate-300">
-            Découvrez où votre stratégie d’acquisition peut générer davantage
-            de clients qualifiés.
+            Discover where your acquisition strategy can generate more
+            qualified customers.
           </p>
 
           <Link
-            href="/fr#audit"
+            href="/#audit"
             className="mt-8 inline-flex items-center gap-3 rounded-xl bg-cyan-500 px-7 py-4 font-bold text-white transition hover:bg-cyan-400"
           >
-            Commencer mon audit gratuit
+            Start my free audit
             <ArrowRight size={18} />
           </Link>
         </div>
@@ -299,13 +295,9 @@ function AcquisitionCard({
         {icon}
       </div>
 
-      <h3 className="text-xl font-bold">
-        {title}
-      </h3>
+      <h3 className="text-xl font-bold">{title}</h3>
 
-      <p className="mt-3 leading-7 text-slate-600">
-        {description}
-      </p>
+      <p className="mt-3 leading-7 text-slate-600">{description}</p>
     </div>
   );
 }
@@ -325,31 +317,21 @@ function ProcessStep({
         {number}
       </span>
 
-      <h3 className="mt-5 text-2xl font-bold">
-        {title}
-      </h3>
+      <h3 className="mt-5 text-2xl font-bold">{title}</h3>
 
-      <p className="mt-4 leading-7 text-slate-600">
-        {text}
-      </p>
+      <p className="mt-4 leading-7 text-slate-600">{text}</p>
     </div>
   );
 }
 
-function Benefit({
-  text,
-}: {
-  text: string;
-}) {
+function Benefit({ text }: { text: string }) {
   return (
     <div className="flex items-center gap-4 rounded-xl border border-slate-200 bg-white p-5">
       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-cyan-50 text-cyan-500">
         <Check size={18} />
       </div>
 
-      <p className="font-semibold text-[#0b2454]">
-        {text}
-      </p>
+      <p className="font-semibold text-[#0b2454]">{text}</p>
     </div>
   );
 }
