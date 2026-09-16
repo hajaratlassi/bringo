@@ -1,0 +1,35 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Contact {
+  id        String   @id @default(cuid())
+  firstName String
+  lastName  String
+  email     String
+  phone     String?
+  company   String?
+  message   String?
+  createdAt DateTime @default(now())
+
+  @@index([email])
+  @@index([createdAt])
+}
+
+model Audit {
+  id        String   @id @default(cuid())
+  website   String
+  finalUrl  String?
+  score     Int
+  status    String
+  summary   String?
+  createdAt DateTime @default(now())
+
+  @@index([website])
+  @@index([createdAt])
+}

@@ -1,267 +1,219 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import {
+  Megaphone,
   Search,
-  TrendingUp,
-  BarChart3,
+  LineChart,
   Bot,
   ArrowRight,
+  Check,
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "AI-Powered Customer Acquisition Solutions",
+  title: "Solutions d’acquisition client propulsées par l’IA | Bringo",
   description:
-    "Explore Bringo's customer acquisition solutions: paid acquisition, AI Search, conversion optimization and intelligent automation.",
+    "Découvrez les solutions Bringo pour l’acquisition, la visibilité dans les moteurs de recherche IA, la conversion et l’automatisation.",
 };
 
 const solutions = [
   {
-    title: "Customer Acquisition",
-    category: "ACQUISITION",
+    number: "01",
+    title: "Acquisition",
+    slug: "acquisition",
     description:
-      "Generate qualified traffic and leads through a predictable customer acquisition system.",
-    href: "/solutions/acquisition",
-    icon: TrendingUp,
-    stat: "+184%",
-    statLabel: "Traffic",
+      "Générez un trafic qualifié et atteignez les bons clients grâce à des canaux d’acquisition performants.",
+    icon: Megaphone,
+    items: [
+      "Meta Ads",
+      "Google Ads",
+      "TikTok Ads",
+      "ChatGPT Ads",
+      "Retargeting",
+    ],
   },
   {
+    number: "02",
     title: "AI Search (GEO)",
-    category: "AI SEARCH",
+    slug: "ai-search",
     description:
-      "Make your brand visible in AI search results and recommendations across modern search engines.",
-    href: "/solutions/ai-search",
+      "Améliorez votre visibilité sur les moteurs de recherche et les systèmes de recommandation basés sur l’IA.",
     icon: Search,
-    stat: "AI",
-    statLabel: "Visibility",
+    items: [
+      "SEO",
+      "GEO",
+      "Visibilité dans les recherches IA",
+      "Stratégie de contenu",
+      "Optimisation de la recherche",
+    ],
   },
   {
-    title: "Conversion Optimization",
-    category: "CONVERSION",
+    number: "03",
+    title: "Conversion",
+    slug: "conversion",
     description:
-      "Turn more visitors into qualified leads and customers with high-performing digital experiences.",
-    href: "/solutions/conversion",
-    icon: BarChart3,
-    stat: "+78%",
-    statLabel: "Conversion",
+      "Transformez vos visiteurs en prospects qualifiés grâce à des expériences digitales performantes.",
+    icon: LineChart,
+    items: [
+      "Landing Pages",
+      "Webinaires",
+      "Funnels",
+      "CRO",
+      "Optimisation de la conversion",
+    ],
   },
   {
-    title: "Customer Acquisition Automation",
-    category: "AUTOMATION",
+    number: "04",
+    title: "Automatisation",
+    slug: "automation",
     description:
-      "Automate repetitive tasks, qualify leads and accelerate your customer acquisition process.",
-    href: "/solutions/automation",
+      "Automatisez les tâches répétitives et accélérez votre processus d’acquisition client.",
     icon: Bot,
-    stat: "24/7",
-    statLabel: "Automation",
+    items: [
+      "Agents IA",
+      "CRM",
+      "Workflows",
+      "Qualification des prospects",
+      "Prise de rendez-vous",
+    ],
   },
 ];
 
-export default function SolutionsPage() {
+export default function FrenchSolutions() {
   return (
-    <main className="bg-white">
-      {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div className="mx-auto max-w-7xl px-6 py-24 lg:px-8 lg:py-32">
-          <div className="grid items-center gap-16 lg:grid-cols-2">
-            {/* Left */}
-            <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-cyan-200 bg-cyan-50 px-4 py-2 text-sm font-bold text-cyan-600">
-                <span className="h-2 w-2 rounded-full bg-cyan-500" />
-                OUR SOLUTIONS
-              </div>
-
-              <h1 className="mt-8 max-w-3xl text-6xl font-extrabold leading-[0.95] tracking-tight text-[#0b2454] lg:text-7xl">
-                Growth systems
-                <span className="block text-cyan-500">
-                  built to perform.
-                </span>
-              </h1>
-
-              <p className="mt-8 max-w-2xl text-lg leading-8 text-slate-600">
-                Build a predictable customer acquisition engine with
-                acquisition, AI search, conversion optimization and
-                intelligent automation.
-              </p>
-
-              <div className="mt-10 flex flex-wrap gap-4">
-                <Link
-                  href="/audit"
-                  className="group inline-flex items-center gap-3 rounded-xl bg-[#0b2454] px-6 py-4 text-sm font-bold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-cyan-500"
-                >
-                  Get a free audit
-                  <ArrowRight
-                    size={18}
-                    className="transition-transform group-hover:translate-x-1"
-                  />
-                </Link>
-
-                <a
-                  href="#solutions"
-                  className="inline-flex items-center gap-3 rounded-xl border border-slate-300 px-6 py-4 text-sm font-bold text-[#0b2454] transition hover:border-cyan-400 hover:text-cyan-500"
-                >
-                  Explore solutions
-                  <ArrowRight size={18} />
-                </a>
-              </div>
-            </div>
-
-            {/* Right visual */}
-            <div className="relative">
-              <div className="rounded-[32px] border border-cyan-100 bg-gradient-to-br from-slate-50 to-cyan-50 p-6 shadow-[0_20px_60px_rgba(11,36,84,0.08)]">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="rounded-2xl bg-[#0b2454] p-7 text-white">
-                    <TrendingUp size={32} className="text-cyan-400" />
-                    <div className="mt-12 text-4xl font-extrabold">
-                      +184%
-                    </div>
-                    <div className="mt-2 text-sm text-slate-300">
-                      Traffic
-                    </div>
-                  </div>
-
-                  <div className="rounded-2xl border border-slate-200 bg-white p-7">
-                    <Search size={32} className="text-cyan-500" />
-                    <div className="mt-12 text-4xl font-extrabold text-[#0b2454]">
-                      AI
-                    </div>
-                    <div className="mt-2 text-sm text-slate-500">
-                      Search visibility
-                    </div>
-                  </div>
-
-                  <div className="rounded-2xl border border-slate-200 bg-white p-7">
-                    <BarChart3 size={32} className="text-cyan-500" />
-                    <div className="mt-12 text-4xl font-extrabold text-[#0b2454]">
-                      +78%
-                    </div>
-                    <div className="mt-2 text-sm text-slate-500">
-                      Conversion
-                    </div>
-                  </div>
-
-                  <div className="rounded-2xl bg-cyan-50 p-7">
-                    <Bot size={32} className="text-cyan-500" />
-                    <div className="mt-12 text-4xl font-extrabold text-[#0b2454]">
-                      24/7
-                    </div>
-                    <div className="mt-2 text-sm text-slate-500">
-                      Automation
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Solutions */}
+    <main>
       <section
         id="solutions"
-        className="border-t border-slate-100 bg-slate-50/50"
+        className="relative overflow-hidden bg-white py-24"
       >
-        <div className="mx-auto max-w-7xl px-6 py-24 lg:px-8">
-          <div className="max-w-2xl">
-            <div className="text-sm font-bold tracking-[0.25em] text-cyan-500">
-              ONE SYSTEM
+        {/* Décoration */}
+        <div className="pointer-events-none absolute left-0 top-20 h-72 w-72 rounded-full bg-cyan-100/40 blur-3xl" />
+        <div className="pointer-events-none absolute right-0 top-1/2 h-96 w-96 rounded-full bg-blue-50/40 blur-3xl" />
+
+        <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
+          {/* HEADER */}
+          <div className="mb-16 grid gap-8 lg:grid-cols-[320px_1fr] lg:items-end">
+            <div>
+              <p className="mb-4 text-sm font-bold uppercase tracking-[0.25em] text-cyan-500">
+                Acquisition de bout en bout
+              </p>
+
+              <h1 className="text-4xl font-extrabold tracking-tight text-[#0b2454] sm:text-5xl lg:text-6xl">
+                Nos{" "}
+                <span className="text-cyan-500">
+                  Solutions
+                </span>
+              </h1>
             </div>
 
-            <h2 className="mt-4 text-4xl font-extrabold tracking-tight text-[#0b2454] lg:text-5xl">
-              Everything you need to
-              <span className="text-cyan-500"> grow.</span>
-            </h2>
-
-            <p className="mt-6 text-lg leading-8 text-slate-600">
-              Our solutions work together to create a complete customer
-              acquisition system.
-            </p>
+            <div className="max-w-2xl lg:ml-auto">
+              <p className="text-lg leading-8 text-slate-600">
+                Tout ce dont vous avez besoin pour attirer, convertir,
+                qualifier et développer votre clientèle grâce à un système
+                d’acquisition connecté.
+              </p>
+            </div>
           </div>
 
-          <div className="mt-14 grid gap-6 md:grid-cols-2">
+          {/* SOLUTIONS */}
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
             {solutions.map((solution) => {
               const Icon = solution.icon;
 
               return (
                 <Link
-                  key={solution.title}
-                  href={solution.href}
-                  className="group overflow-hidden rounded-3xl border border-slate-200 bg-white transition-all duration-300 hover:-translate-y-1 hover:border-cyan-200 hover:shadow-xl"
+                  key={solution.number}
+                  href={`/fr/solutions/${solution.slug}`}
+                  className="group block"
                 >
-                  {/* Card top */}
-                  <div className="bg-[#0b2454] p-8">
-                    <div className="flex items-start justify-between">
-                      <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-white">
-                        <Icon size={28} className="text-cyan-500" />
-                      </div>
-
-                      <span className="rounded-full border border-white/20 px-3 py-1 text-xs font-bold tracking-wider text-white">
-                        {solution.category}
+                  <article className="relative h-full rounded-3xl border border-slate-200 bg-white p-7 shadow-[0_10px_40px_rgba(15,35,80,0.06)] transition-all duration-300 group-hover:-translate-y-2 group-hover:border-cyan-200 group-hover:shadow-[0_20px_50px_rgba(15,35,80,0.12)]">
+                    {/* Numéro + icône */}
+                    <div className="mb-6 flex items-center justify-between">
+                      <span className="text-sm font-bold tracking-widest text-cyan-500">
+                        {solution.number}
                       </span>
+
+                      <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-cyan-100 bg-cyan-50 text-cyan-500 transition-all duration-300 group-hover:bg-cyan-500 group-hover:text-white">
+                        <Icon
+                          size={26}
+                          strokeWidth={1.8}
+                        />
+                      </div>
                     </div>
 
-                    <div className="mt-10 text-4xl font-extrabold text-white">
-                      {solution.stat}
-                    </div>
-
-                    <div className="mt-2 text-sm text-slate-300">
-                      {solution.statLabel}
-                    </div>
-                  </div>
-
-                  {/* Card bottom */}
-                  <div className="p-8">
-                    <h3 className="text-2xl font-extrabold text-[#0b2454]">
+                    {/* Titre */}
+                    <h2 className="mb-4 text-2xl font-bold text-[#0b2454]">
                       {solution.title}
-                    </h3>
+                    </h2>
 
-                    <p className="mt-4 min-h-[72px] text-base leading-7 text-slate-600">
+                    {/* Description */}
+                    <p className="mb-7 min-h-[96px] text-sm leading-6 text-slate-500">
                       {solution.description}
                     </p>
 
-                    <div className="mt-8 flex items-center gap-2 font-bold text-[#0b2454] transition-colors group-hover:text-cyan-500">
-                      Explore solution
+                    {/* Liste */}
+                    <div className="space-y-3 border-t border-slate-100 pt-6">
+                      {solution.items.map((item) => (
+                        <div
+                          key={item}
+                          className="flex items-center gap-3 text-sm text-slate-700"
+                        >
+                          <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-cyan-50 text-cyan-500">
+                            <Check
+                              size={12}
+                              strokeWidth={3}
+                            />
+                          </span>
+
+                          <span>{item}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Lien */}
+                    <div className="mt-8 flex items-center gap-2 text-sm font-bold text-[#0b2454] transition-colors group-hover:text-cyan-500">
+                      Découvrir la solution
+
                       <ArrowRight
-                        size={18}
-                        className="transition-transform duration-200 group-hover:translate-x-1"
+                        size={16}
+                        className="transition-transform duration-300 group-hover:translate-x-1"
                       />
                     </div>
-                  </div>
+                  </article>
                 </Link>
               );
             })}
           </div>
-        </div>
-      </section>
 
-      {/* CTA */}
-      <section className="bg-[#0b2454]">
-        <div className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
-          <div className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
-            <div>
-              <div className="text-sm font-bold tracking-[0.25em] text-cyan-400">
-                READY TO GROW?
+          {/* CTA FINAL */}
+          <div className="relative mt-16 overflow-hidden rounded-3xl bg-[#0b2454] px-8 py-10 shadow-xl sm:px-12">
+            {/* Décoration */}
+            <div className="pointer-events-none absolute -right-20 -top-20 h-60 w-60 rounded-full bg-cyan-500/10 blur-3xl" />
+
+            <div className="relative flex flex-col items-start justify-between gap-8 lg:flex-row lg:items-center">
+              <div>
+                <p className="mb-2 text-sm font-semibold uppercase tracking-[0.2em] text-cyan-400">
+                  Un seul système
+                </p>
+
+                <h2 className="max-w-3xl text-3xl font-bold text-white sm:text-4xl">
+                  Construisez votre système d’acquisition client.
+                </h2>
+
+                <p className="mt-3 max-w-2xl leading-7 text-slate-300">
+                  Connectez acquisition, recherche IA, conversion et
+                  automatisation au sein d’un système puissant et cohérent.
+                </p>
               </div>
 
-              <h2 className="mt-3 text-3xl font-extrabold text-white lg:text-4xl">
-                Build your next growth system.
-              </h2>
+              <Link
+                href="/fr/audit"
+                className="inline-flex shrink-0 items-center gap-3 rounded-xl bg-white px-7 py-4 font-bold text-[#0b2454] transition-all hover:bg-cyan-50 hover:shadow-lg"
+              >
+                Obtenir mon audit gratuit
 
-              <p className="mt-3 max-w-xl text-slate-300">
-                Discover where your biggest acquisition opportunities are.
-              </p>
+                <ArrowRight size={18} />
+              </Link>
             </div>
-
-            <Link
-              href="/audit"
-              className="group inline-flex shrink-0 items-center gap-3 rounded-xl bg-white px-6 py-4 text-sm font-bold text-[#0b2454] transition hover:bg-cyan-400"
-            >
-              Get a free audit
-              <ArrowRight
-                size={18}
-                className="transition-transform group-hover:translate-x-1"
-              />
-            </Link>
           </div>
         </div>
       </section>

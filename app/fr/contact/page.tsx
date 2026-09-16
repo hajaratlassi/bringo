@@ -11,23 +11,72 @@ import {
 
 export default function FrenchContactPage() {
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setSubmitted(true);
+
+    setLoading(true);
+    setError("");
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+
+    const name = String(formData.get("name") || "").trim();
+    const nameParts = name.split(/\s+/);
+
+    const firstName = nameParts[0] || "";
+    const lastName = nameParts.slice(1).join(" ") || firstName;
+
+    const email = String(formData.get("email") || "").trim();
+    const company = String(formData.get("company") || "").trim();
+    const need = String(formData.get("need") || "").trim();
+    const message = String(formData.get("message") || "").trim();
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          firstName,
+          lastName,
+          email,
+          company,
+          message: `Besoin : ${need}\n\n${message}`,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Une erreur est survenue.");
+      }
+
+      setSubmitted(true);
+      form.reset();
+    } catch (err) {
+      console.error(err);
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Impossible d'envoyer votre demande."
+      );
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
     <main className="min-h-screen bg-white">
-      {/* HERO */}
       <section className="border-b border-slate-100 bg-gradient-to-b from-white to-cyan-50/30 py-24">
         <div className="mx-auto max-w-[1400px] px-6 lg:px-10">
           <div className="grid items-center gap-14 lg:grid-cols-2">
-            {/* LEFT */}
             <div>
               <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-cyan-200 bg-cyan-50 px-4 py-2">
                 <span className="h-2 w-2 rounded-full bg-cyan-500" />
-
                 <span className="text-sm font-bold uppercase tracking-wide text-cyan-600">
                   Contactez-nous
                 </span>
@@ -47,7 +96,6 @@ export default function FrenchContactPage() {
                 Parlons de votre projet.
               </p>
 
-              {/* CONTACT INFO */}
               <div className="mt-10 space-y-5">
                 <div className="flex items-center gap-4">
                   <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-cyan-50">
@@ -58,7 +106,6 @@ export default function FrenchContactPage() {
                     <p className="text-xs font-bold uppercase tracking-wide text-slate-400">
                       Email
                     </p>
-
                     <p className="mt-1 font-semibold text-blue-950">
                       contact@bringo.ma
                     </p>
@@ -74,7 +121,6 @@ export default function FrenchContactPage() {
                     <p className="text-xs font-bold uppercase tracking-wide text-slate-400">
                       Téléphone
                     </p>
-
                     <p className="mt-1 font-semibold text-blue-950">
                       Disponible sur demande
                     </p>
@@ -90,7 +136,6 @@ export default function FrenchContactPage() {
                     <p className="text-xs font-bold uppercase tracking-wide text-slate-400">
                       Localisation
                     </p>
-
                     <p className="mt-1 font-semibold text-blue-950">
                       Maroc & Europe
                     </p>
@@ -99,7 +144,6 @@ export default function FrenchContactPage() {
               </div>
             </div>
 
-            {/* FORM */}
             <div className="rounded-3xl border border-cyan-100 bg-white p-6 shadow-xl sm:p-8">
               {!submitted ? (
                 <>
@@ -119,7 +163,6 @@ export default function FrenchContactPage() {
                   </div>
 
                   <form onSubmit={handleSubmit} className="space-y-5">
-                    {/* NOM */}
                     <div>
                       <label
                         htmlFor="name"
@@ -138,7 +181,6 @@ export default function FrenchContactPage() {
                       />
                     </div>
 
-                    {/* EMAIL */}
                     <div>
                       <label
                         htmlFor="email"
@@ -157,7 +199,6 @@ export default function FrenchContactPage() {
                       />
                     </div>
 
-                    {/* ENTREPRISE */}
                     <div>
                       <label
                         htmlFor="company"
@@ -175,7 +216,6 @@ export default function FrenchContactPage() {
                       />
                     </div>
 
-                    {/* BESOIN */}
                     <div>
                       <label
                         htmlFor="need"
@@ -194,30 +234,24 @@ export default function FrenchContactPage() {
                         <option value="" disabled>
                           Sélectionnez votre besoin
                         </option>
-
                         <option value="acquisition">
                           Acquisition client
                         </option>
-
                         <option value="ai-search">
                           Recherche IA / GEO
                         </option>
-
                         <option value="conversion">
                           Optimisation de la conversion
                         </option>
-
                         <option value="automation">
                           Automatisation
                         </option>
-
                         <option value="other">
                           Autre
                         </option>
                       </select>
                     </div>
 
-                    {/* MESSAGE */}
                     <div>
                       <label
                         htmlFor="message"
@@ -236,18 +270,23 @@ export default function FrenchContactPage() {
                       />
                     </div>
 
-                    {/* SUBMIT */}
+                    {error && (
+                      <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+                        {error}
+                      </div>
+                    )}
+
                     <button
                       type="submit"
-                      className="flex w-full items-center justify-center gap-3 rounded-lg bg-blue-950 px-6 py-4 text-sm font-bold text-white shadow-lg transition hover:bg-blue-900"
+                      disabled={loading}
+                      className="flex w-full items-center justify-center gap-3 rounded-lg bg-blue-950 px-6 py-4 text-sm font-bold text-white shadow-lg transition hover:bg-blue-900 disabled:cursor-not-allowed disabled:opacity-60"
                     >
-                      Envoyer ma demande
-                      <ArrowRight size={18} />
+                      {loading ? "Envoi en cours..." : "Envoyer ma demande"}
+                      {!loading && <ArrowRight size={18} />}
                     </button>
                   </form>
                 </>
               ) : (
-                /* SUCCESS */
                 <div className="flex min-h-[560px] flex-col items-center justify-center text-center">
                   <div className="flex h-20 w-20 items-center justify-center rounded-full bg-cyan-50">
                     <Check size={38} className="text-cyan-500" />
@@ -258,7 +297,7 @@ export default function FrenchContactPage() {
                   </h2>
 
                   <p className="mt-4 max-w-md text-base leading-7 text-slate-600">
-                    Votre demande a bien été prise en compte. Notre équipe
+                    Votre demande a bien été enregistrée. Notre équipe
                     reviendra vers vous prochainement.
                   </p>
 
@@ -277,7 +316,6 @@ export default function FrenchContactPage() {
         </div>
       </section>
 
-      {/* BOTTOM CTA */}
       <section className="bg-blue-950 py-20">
         <div className="mx-auto max-w-[1000px] px-6 text-center">
           <p className="text-sm font-bold uppercase tracking-widest text-cyan-400">

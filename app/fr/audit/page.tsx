@@ -11,6 +11,7 @@ import {
   Bot,
   Globe,
   MousePointerClick,
+  AlertCircle,
 } from "lucide-react";
 
 const auditItems = [
@@ -58,36 +59,102 @@ const auditItems = [
   },
 ];
 
+type AuditCheck = {
+  key: string;
+  label: string;
+  ok: boolean;
+};
+
+type AuditResult = {
+  website: string;
+  finalUrl: string;
+  score: number;
+  status: number;
+  checks: AuditCheck[];
+  summary: {
+    title: string;
+    description: string;
+    h1Count: number;
+    links: number;
+    imagesCount: number;
+    imagesWithoutAlt: number;
+  };
+};
+
 export default function FrenchAuditPage() {
   const [website, setWebsite] = useState("");
   const [loading, setLoading] = useState(false);
-  const [score, setScore] = useState<number | null>(null);
+  const [result, setResult] = useState<AuditResult | null>(null);
+  const [error, setError] = useState("");
 
-  const handleAudit = () => {
-    if (!website.trim()) return;
+  const handleAudit = async () => {
+    if (!website.trim() || loading) return;
 
     setLoading(true);
-    setScore(null);
+    setResult(null);
+    setError("");
 
-    setTimeout(() => {
-      const generatedScore = 60 + Math.floor(Math.random() * 31);
-      setScore(generatedScore);
+    try {
+      const response = await fetch("/api/audit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          website: website.trim(),
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.error || "Impossible d'analyser ce site."
+        );
+      }
+
+      setResult(data);
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Une erreur est survenue pendant l'analyse."
+      );
+    } finally {
       setLoading(false);
-    }, 1800);
+    }
   };
 
   const getScoreLabel = () => {
-    if (!score) return "";
+    if (!result) return "";
 
-    if (score >= 80) {
+    if (result.score >= 80) {
       return "Fort potentiel";
     }
 
-    if (score >= 70) {
+    if (result.score >= 60) {
       return "Bon potentiel";
     }
 
+    if (result.score >= 40) {
+      return "Potentiel à améliorer";
+    }
+
     return "Opportunité de croissance";
+  };
+
+  const getScoreMessage = () => {
+    if (!result) return "";
+
+    if (result.score >= 80) {
+      return "Votre site possède une bonne base technique. Des optimisations ciblées peuvent encore améliorer votre acquisition.";
+    }
+
+    if (result.score >= 60) {
+      return "Votre site possède une base intéressante, mais plusieurs opportunités peuvent améliorer votre visibilité et votre acquisition.";
+    }
+
+    return "Votre site présente plusieurs opportunités importantes pour améliorer votre visibilité, votre conversion et votre acquisition.";
   };
 
   return (
@@ -151,7 +218,7 @@ export default function FrenchAuditPage() {
               </div>
             </div>
 
-            {/* RIGHT - AUDIT CARD */}
+            {/* RIGHT */}
             <div
               id="audit-form"
               className="rounded-3xl border border-cyan-100 bg-white p-5 shadow-2xl sm:p-7"
@@ -159,7 +226,10 @@ export default function FrenchAuditPage() {
               <div className="rounded-2xl bg-blue-950 p-6 sm:p-8">
                 <div className="flex items-center gap-3">
                   <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-500/10">
-                    <Sparkles className="text-cyan-400" size={25} />
+                    <Sparkles
+                      className="text-cyan-400"
+                      size={25}
+                    />
                   </div>
 
                   <div>
@@ -187,13 +257,18 @@ export default function FrenchAuditPage() {
                   </label>
 
                   <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white px-4 py-3">
-                    <Search size={19} className="text-slate-400" />
+                    <Search
+                      size={19}
+                      className="shrink-0 text-slate-400"
+                    />
 
                     <input
                       id="website"
-                      type="text"
+                      type="url"
                       value={website}
-                      onChange={(e) => setWebsite(e.target.value)}
+                      onChange={(e) =>
+                        setWebsite(e.target.value)
+                      }
                       onKeyDown={(e) => {
                         if (e.key === "Enter") {
                           handleAudit();
@@ -206,6 +281,7 @@ export default function FrenchAuditPage() {
                 </div>
 
                 <button
+                  type="button"
                   onClick={handleAudit}
                   disabled={loading || !website.trim()}
                   className="mt-4 flex w-full items-center justify-center gap-3 rounded-xl bg-cyan-500 px-6 py-4 text-sm font-bold text-white transition hover:bg-cyan-400 disabled:cursor-not-allowed disabled:opacity-50"
@@ -223,37 +299,75 @@ export default function FrenchAuditPage() {
                   )}
                 </button>
 
-                {/* SCORE */}
-                {score !== null && !loading && (
-                  <div className="mt-6 rounded-2xl border border-cyan-400/20 bg-white/5 p-6 text-center">
-                    <p className="text-sm font-medium text-slate-300">
-                      Analyse terminée pour :
-                    </p>
+                {/* ERROR */}
+                {error && (
+                  <div className="mt-5 flex gap-3 rounded-xl border border-red-400/20 bg-red-500/10 p-4 text-sm text-red-200">
+                    <AlertCircle
+                      size={19}
+                      className="shrink-0"
+                    />
 
-                    <p className="mt-1 truncate text-sm font-bold text-white">
-                      {website}
-                    </p>
+                    <p>{error}</p>
+                  </div>
+                )}
 
-                    <div className="mx-auto mt-5 flex h-32 w-32 items-center justify-center rounded-full border-8 border-cyan-400">
-                      <div>
-                        <div className="text-4xl font-extrabold text-white">
-                          {score}
-                        </div>
+                {/* RESULT */}
+                {result && !loading && (
+                  <div className="mt-6 rounded-2xl border border-cyan-400/20 bg-white/5 p-6">
+                    <div className="text-center">
+                      <p className="text-sm font-medium text-slate-300">
+                        Analyse terminée pour :
+                      </p>
 
-                        <div className="text-xs text-slate-300">
-                          / 100
+                      <p className="mt-1 truncate text-sm font-bold text-white">
+                        {result.website}
+                      </p>
+
+                      <div className="mx-auto mt-5 flex h-32 w-32 items-center justify-center rounded-full border-8 border-cyan-400">
+                        <div>
+                          <div className="text-4xl font-extrabold text-white">
+                            {result.score}
+                          </div>
+
+                          <div className="text-xs text-slate-300">
+                            / 100
+                          </div>
                         </div>
                       </div>
+
+                      <p className="mt-4 text-lg font-bold text-cyan-400">
+                        {getScoreLabel()}
+                      </p>
+
+                      <p className="mt-2 text-sm leading-6 text-slate-300">
+                        {getScoreMessage()}
+                      </p>
                     </div>
 
-                    <p className="mt-4 text-lg font-bold text-cyan-400">
-                      {getScoreLabel()}
-                    </p>
+                    {/* CHECKS */}
+                    <div className="mt-6 space-y-2">
+                      {result.checks.map((check) => (
+                        <div
+                          key={check.key}
+                          className="flex items-center justify-between rounded-lg bg-white/5 px-3 py-2"
+                        >
+                          <span className="text-sm text-slate-300">
+                            {check.label}
+                          </span>
 
-                    <p className="mt-2 text-sm leading-6 text-slate-300">
-                      Votre site présente plusieurs opportunités pour améliorer
-                      votre acquisition et votre visibilité.
-                    </p>
+                          {check.ok ? (
+                            <Check
+                              size={17}
+                              className="text-cyan-400"
+                            />
+                          ) : (
+                            <span className="text-xs font-bold text-amber-400">
+                              À améliorer
+                            </span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
@@ -275,7 +389,9 @@ export default function FrenchAuditPage() {
 
             <h2 className="mt-4 text-4xl font-extrabold leading-tight text-blue-950 sm:text-5xl">
               Une analyse complète de votre{" "}
-              <span className="text-cyan-500">système d'acquisition.</span>
+              <span className="text-cyan-500">
+                système d'acquisition.
+              </span>
             </h2>
 
             <p className="mt-5 text-base leading-7 text-slate-600">
@@ -295,7 +411,10 @@ export default function FrenchAuditPage() {
                   className="rounded-2xl border border-slate-200 bg-white p-6 transition hover:-translate-y-1 hover:border-cyan-200 hover:shadow-xl"
                 >
                   <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-50">
-                    <Icon size={23} className="text-cyan-500" />
+                    <Icon
+                      size={23}
+                      className="text-cyan-500"
+                    />
                   </div>
 
                   <h3 className="mt-5 text-xl font-bold text-blue-950">
