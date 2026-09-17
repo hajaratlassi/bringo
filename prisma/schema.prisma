@@ -9,8 +9,7 @@ datasource db {
 
 model Contact {
   id        String   @id @default(cuid())
-  firstName String
-  lastName  String
+  name      String
   email     String
   phone     String?
   company   String?

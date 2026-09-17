@@ -24,11 +24,14 @@ export async function POST(request: Request) {
       );
     }
 
+    const cleanFirstName = String(firstName).trim();
+    const cleanLastName = String(lastName).trim();
+    const cleanEmail = String(email).trim().toLowerCase();
+
     const contact = await prisma.contact.create({
       data: {
-        firstName: String(firstName).trim(),
-        lastName: String(lastName).trim(),
-        email: String(email).trim().toLowerCase(),
+        name: `${cleanFirstName} ${cleanLastName}`,
+        email: cleanEmail,
         phone: phone ? String(phone).trim() : null,
         company: company ? String(company).trim() : null,
         message: message ? String(message).trim() : null,
