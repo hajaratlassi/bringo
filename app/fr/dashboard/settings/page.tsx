@@ -28,6 +28,30 @@ const DEFAULT_SETTINGS: SettingsData = {
 const STORAGE_KEY = "bringo-settings";
 const COOKIE_KEY = "bringo-settings";
 
+function normalizeSettings(value: Partial<SettingsData>): SettingsData {
+  return {
+    name:
+      typeof value.name === "string" && value.name.trim()
+        ? value.name
+        : DEFAULT_SETTINGS.name,
+
+    email:
+      typeof value.email === "string" && value.email.trim()
+        ? value.email
+        : DEFAULT_SETTINGS.email,
+
+    language:
+      typeof value.language === "string" && value.language
+        ? value.language
+        : DEFAULT_SETTINGS.language,
+
+    notifications:
+      typeof value.notifications === "boolean"
+        ? value.notifications
+        : DEFAULT_SETTINGS.notifications,
+  };
+}
+
 function loadSettings(): SettingsData {
   try {
     const local = localStorage.getItem(STORAGE_KEY);
@@ -35,15 +59,7 @@ function loadSettings(): SettingsData {
     if (local) {
       const parsed = JSON.parse(local);
 
-      return {
-        name: parsed.name ?? DEFAULT_SETTINGS.name,
-        email: parsed.email ?? DEFAULT_SETTINGS.email,
-        language: parsed.language ?? DEFAULT_SETTINGS.language,
-        notifications:
-          typeof parsed.notifications === "boolean"
-            ? parsed.notifications
-            : DEFAULT_SETTINGS.notifications,
-      };
+      return normalizeSettings(parsed);
     }
 
     const cookies = document.cookie.split("; ");
@@ -57,15 +73,7 @@ function loadSettings(): SettingsData {
 
       const parsed = JSON.parse(decodeURIComponent(value));
 
-      return {
-        name: parsed.name ?? DEFAULT_SETTINGS.name,
-        email: parsed.email ?? DEFAULT_SETTINGS.email,
-        language: parsed.language ?? DEFAULT_SETTINGS.language,
-        notifications:
-          typeof parsed.notifications === "boolean"
-            ? parsed.notifications
-            : DEFAULT_SETTINGS.notifications,
-      };
+      return normalizeSettings(parsed);
     }
   } catch (error) {
     console.error("SETTINGS_LOAD_ERROR:", error);
@@ -99,6 +107,9 @@ export default function SettingsPage() {
   const [saved, setSaved] = useState(false);
   const [loaded, setLoaded] = useState(false);
 
+  /*
+   * LOAD SETTINGS
+   */
   useEffect(() => {
     const settings = loadSettings();
 
@@ -110,6 +121,25 @@ export default function SettingsPage() {
     setLoaded(true);
   }, []);
 
+  /*
+   * AUTO SAVE
+   */
+  useEffect(() => {
+    if (!loaded) return;
+
+    const settings: SettingsData = {
+      name: name.trim() || DEFAULT_SETTINGS.name,
+      email: email.trim() || DEFAULT_SETTINGS.email,
+      language,
+      notifications,
+    };
+
+    savePersistentSettings(settings);
+  }, [name, email, language, notifications, loaded]);
+
+  /*
+   * MANUAL SAVE
+   */
   function saveSettings() {
     const settings: SettingsData = {
       name: name.trim() || DEFAULT_SETTINGS.name,
@@ -213,6 +243,7 @@ export default function SettingsPage() {
 
             <div className="grid gap-5 md:grid-cols-2">
 
+              {/* NAME */}
               <div>
                 <label className="mb-2 block text-sm font-bold text-[#172b68]">
                   Nom
@@ -226,6 +257,7 @@ export default function SettingsPage() {
                 />
               </div>
 
+              {/* EMAIL */}
               <div>
                 <label className="mb-2 block text-sm font-bold text-[#172b68]">
                   Email
