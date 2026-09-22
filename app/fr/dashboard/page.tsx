@@ -33,6 +33,7 @@ type Stats = {
 
 export default function DashboardPage() {
   const [audits, setAudits] = useState<Audit[]>([]);
+
   const [stats, setStats] = useState<Stats>({
     total: 0,
     averageScore: 0,
@@ -59,19 +60,81 @@ export default function DashboardPage() {
 
       const data = await response.json();
 
-      setAudits(data.audits || []);
-      setStats(
-        data.stats || {
-          total: 0,
-          averageScore: 0,
-          good: 0,
-          needsImprovement: 0,
-          critical: 0,
-        }
+      const auditList: Audit[] = Array.isArray(data.audits)
+        ? data.audits
+        : [];
+
+      const apiStats = data.stats ?? {};
+
+      /*
+       * Sécurisation des statistiques.
+       * On accepte plusieurs noms possibles provenant de l'API
+       * afin d'éviter undefined + undefined = NaN.
+       */
+
+      const total = Number(
+        apiStats.total ?? auditList.length
       );
+
+      const averageScore = Number(
+        apiStats.averageScore ?? 0
+      );
+
+      const good = Number(
+        apiStats.good ??
+          apiStats.goodScores ??
+          auditList.filter((audit) => Number(audit.score) >= 70).length
+      );
+
+      const needsImprovement = Number(
+        apiStats.needsImprovement ??
+          auditList.filter(
+            (audit) =>
+              Number(audit.score) >= 40 &&
+              Number(audit.score) < 70
+          ).length
+      );
+
+      const critical = Number(
+        apiStats.critical ??
+          auditList.filter(
+            (audit) => Number(audit.score) < 40
+          ).length
+      );
+
+      setAudits(auditList);
+
+      setStats({
+        total: Number.isFinite(total) ? total : auditList.length,
+
+        averageScore: Number.isFinite(averageScore)
+          ? averageScore
+          : 0,
+
+        good: Number.isFinite(good) ? good : 0,
+
+        needsImprovement: Number.isFinite(needsImprovement)
+          ? needsImprovement
+          : 0,
+
+        critical: Number.isFinite(critical)
+          ? critical
+          : 0,
+      });
     } catch (err) {
-      console.error(err);
+      console.error("DASHBOARD_AUDITS_ERROR:", err);
+
       setError("Impossible de charger les audits.");
+
+      setAudits([]);
+
+      setStats({
+        total: 0,
+        averageScore: 0,
+        good: 0,
+        needsImprovement: 0,
+        critical: 0,
+      });
     } finally {
       setLoading(false);
     }
@@ -117,9 +180,22 @@ export default function DashboardPage() {
     };
   }
 
+  const improvementCount =
+    Number.isFinite(stats.needsImprovement)
+      ? stats.needsImprovement
+      : 0;
+
+  const criticalCount =
+    Number.isFinite(stats.critical)
+      ? stats.critical
+      : 0;
+
+  const totalNeedsImprovement =
+    improvementCount + criticalCount;
+
   return (
     <main className="min-h-screen bg-slate-50">
-      {/* Header */}
+      {/* HEADER */}
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
           <div>
@@ -147,8 +223,11 @@ export default function DashboardPage() {
               className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-cyan-400 hover:text-cyan-600 disabled:opacity-50"
             >
               <RefreshCw
-                className={`h-4 w-4 ${loading ? "animate-spin" : ""}`}
+                className={`h-4 w-4 ${
+                  loading ? "animate-spin" : ""
+                }`}
               />
+
               Actualiser
             </button>
 
@@ -164,7 +243,7 @@ export default function DashboardPage() {
       </header>
 
       <div className="mx-auto max-w-7xl px-6 py-10">
-        {/* Intro */}
+        {/* INTRO */}
         <div className="mb-8">
           <p className="mb-2 text-sm font-bold uppercase tracking-[0.18em] text-cyan-500">
             Vue globale
@@ -179,15 +258,16 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        {/* Error */}
+        {/* ERROR */}
         {error && (
           <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-600">
             {error}
           </div>
         )}
 
-        {/* Stats */}
+        {/* STATS */}
         <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+          {/* AUDITS */}
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             <div className="mb-5 flex items-center justify-between">
               <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-cyan-50">
@@ -200,10 +280,11 @@ export default function DashboardPage() {
             </p>
 
             <p className="mt-1 text-3xl font-black text-[#17265f]">
-              {stats.total}
+              {loading ? "..." : stats.total}
             </p>
           </div>
 
+          {/* SCORE */}
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-50">
               <TrendingUp className="h-5 w-5 text-indigo-600" />
@@ -214,11 +295,15 @@ export default function DashboardPage() {
             </p>
 
             <p className="mt-1 text-3xl font-black text-[#17265f]">
-              {stats.averageScore}
-              <span className="text-lg text-slate-400">/100</span>
+              {loading ? "..." : stats.averageScore}
+
+              <span className="text-lg text-slate-400">
+                /100
+              </span>
             </p>
           </div>
 
+          {/* GOOD */}
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50">
               <CheckCircle2 className="h-5 w-5 text-emerald-600" />
@@ -229,10 +314,11 @@ export default function DashboardPage() {
             </p>
 
             <p className="mt-1 text-3xl font-black text-[#17265f]">
-              {stats.good}
+              {loading ? "..." : stats.good}
             </p>
           </div>
 
+          {/* NEEDS IMPROVEMENT */}
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50">
               <AlertTriangle className="h-5 w-5 text-amber-500" />
@@ -243,12 +329,12 @@ export default function DashboardPage() {
             </p>
 
             <p className="mt-1 text-3xl font-black text-[#17265f]">
-              {stats.needsImprovement + stats.critical}
+              {loading ? "..." : totalNeedsImprovement}
             </p>
           </div>
         </div>
 
-        {/* Audits table */}
+        {/* AUDITS TABLE */}
         <div className="mt-8 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
           <div className="border-b border-slate-200 px-6 py-5">
             <div className="flex items-center justify-between">
@@ -263,7 +349,8 @@ export default function DashboardPage() {
               </div>
 
               <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600">
-                {audits.length} résultat{audits.length > 1 ? "s" : ""}
+                {audits.length} résultat
+                {audits.length > 1 ? "s" : ""}
               </span>
             </div>
           </div>
@@ -316,7 +403,8 @@ export default function DashboardPage() {
 
                 <tbody>
                   {audits.map((audit) => {
-                    const status = getStatus(audit.score);
+                    const score = Number(audit.score) || 0;
+                    const status = getStatus(score);
                     const StatusIcon = status.icon;
 
                     return (
@@ -348,15 +436,15 @@ export default function DashboardPage() {
                         <td className="px-6 py-5">
                           <div
                             className={`inline-flex items-center rounded-xl px-3 py-2 ${getScoreBackground(
-                              audit.score
+                              score
                             )}`}
                           >
                             <span
                               className={`text-xl font-black ${getScoreColor(
-                                audit.score
+                                score
                               )}`}
                             >
-                              {audit.score}
+                              {score}
                             </span>
 
                             <span className="ml-1 text-xs font-bold text-slate-400">
@@ -378,14 +466,13 @@ export default function DashboardPage() {
                           <div className="flex items-center gap-2 text-sm text-slate-500">
                             <Clock className="h-4 w-4" />
 
-                            {new Date(audit.createdAt).toLocaleDateString(
-                              "fr-FR",
-                              {
-                                day: "2-digit",
-                                month: "2-digit",
-                                year: "numeric",
-                              }
-                            )}
+                            {new Date(
+                              audit.createdAt
+                            ).toLocaleDateString("fr-FR", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                            })}
                           </div>
                         </td>
                       </tr>
