@@ -16,10 +16,8 @@ export default async function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* ADMIN SIDEBAR */}
       <AdminSidebar />
 
-      {/* ADMIN CONTENT */}
       <main className="lg:pl-64 min-h-screen">
         {children}
       </main>
