@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Settings,
   User,
@@ -11,24 +11,60 @@ import {
   CheckCircle2,
 } from "lucide-react";
 
+type SettingsData = {
+  name: string;
+  email: string;
+  language: string;
+  notifications: boolean;
+};
+
+const DEFAULT_SETTINGS: SettingsData = {
+  name: "BRINGO Admin",
+  email: "admin@bringo.fr",
+  language: "Français",
+  notifications: true,
+};
+
 export default function SettingsPage() {
-  const [name, setName] = useState("BRINGO Admin");
-  const [email, setEmail] = useState("admin@bringo.fr");
-  const [language, setLanguage] = useState("Français");
-  const [notifications, setNotifications] = useState(true);
+  const [name, setName] = useState(DEFAULT_SETTINGS.name);
+  const [email, setEmail] = useState(DEFAULT_SETTINGS.email);
+  const [language, setLanguage] = useState(DEFAULT_SETTINGS.language);
+  const [notifications, setNotifications] = useState(
+    DEFAULT_SETTINGS.notifications
+  );
   const [saved, setSaved] = useState(false);
 
-  function saveSettings() {
-    localStorage.setItem(
-      "bringo-settings",
-      JSON.stringify({
-        name,
-        email,
-        language,
-        notifications,
-      })
-    );
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("bringo-settings");
 
+      if (!stored) return;
+
+      const settings = JSON.parse(stored) as Partial<SettingsData>;
+
+      setName(settings.name ?? DEFAULT_SETTINGS.name);
+      setEmail(settings.email ?? DEFAULT_SETTINGS.email);
+      setLanguage(settings.language ?? DEFAULT_SETTINGS.language);
+      setNotifications(
+        settings.notifications ?? DEFAULT_SETTINGS.notifications
+      );
+    } catch (error) {
+      console.error("SETTINGS_LOAD_ERROR:", error);
+    }
+  }, []);
+
+  function saveSettings() {
+    const settings: SettingsData = {
+      name: name.trim() || DEFAULT_SETTINGS.name,
+      email: email.trim() || DEFAULT_SETTINGS.email,
+      language,
+      notifications,
+    };
+
+    localStorage.setItem("bringo-settings", JSON.stringify(settings));
+
+    setName(settings.name);
+    setEmail(settings.email);
     setSaved(true);
 
     setTimeout(() => {
@@ -39,7 +75,6 @@ export default function SettingsPage() {
   return (
     <main className="min-h-screen bg-[#f7f9fc] px-6 py-10 lg:px-10">
       <div className="mx-auto max-w-5xl">
-
         {/* HEADER */}
         <div className="mb-10 flex flex-col justify-between gap-5 md:flex-row md:items-center">
           <div className="flex items-center gap-4">
@@ -63,6 +98,7 @@ export default function SettingsPage() {
           </div>
 
           <button
+            type="button"
             onClick={saveSettings}
             className="flex items-center justify-center gap-2 rounded-xl bg-[#172b68] px-6 py-3 font-bold text-white shadow-sm transition hover:bg-[#102153]"
           >
@@ -75,6 +111,7 @@ export default function SettingsPage() {
         {saved && (
           <div className="mb-6 flex items-center gap-3 rounded-2xl border border-green-200 bg-green-50 p-4 text-green-700">
             <CheckCircle2 className="h-5 w-5" />
+
             <span className="font-semibold">
               Paramètres enregistrés avec succès.
             </span>
@@ -82,7 +119,6 @@ export default function SettingsPage() {
         )}
 
         <div className="space-y-6">
-
           {/* ACCOUNT */}
           <section className="rounded-3xl border border-[#e1e7f0] bg-white p-7 shadow-sm">
             <div className="mb-7 flex items-center gap-3">
@@ -102,13 +138,13 @@ export default function SettingsPage() {
             </div>
 
             <div className="grid gap-5 md:grid-cols-2">
-
               <div>
                 <label className="mb-2 block text-sm font-bold text-[#172b68]">
                   Nom
                 </label>
 
                 <input
+                  type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   className="w-full rounded-xl border border-[#dce4ef] bg-white px-4 py-3 text-[#172b68] outline-none transition focus:border-[#00bddf] focus:ring-2 focus:ring-[#00bddf]/10"
@@ -127,7 +163,6 @@ export default function SettingsPage() {
                   className="w-full rounded-xl border border-[#dce4ef] bg-white px-4 py-3 text-[#172b68] outline-none transition focus:border-[#00bddf] focus:ring-2 focus:ring-[#00bddf]/10"
                 />
               </div>
-
             </div>
           </section>
 
@@ -200,6 +235,8 @@ export default function SettingsPage() {
 
               <button
                 type="button"
+                aria-label="Activer ou désactiver les notifications"
+                aria-pressed={notifications}
                 onClick={() => setNotifications(!notifications)}
                 className={`relative h-7 w-12 rounded-full transition ${
                   notifications ? "bg-[#00bddf]" : "bg-gray-300"
@@ -237,8 +274,8 @@ export default function SettingsPage() {
               onChange={(e) => setLanguage(e.target.value)}
               className="w-full rounded-xl border border-[#dce4ef] bg-white px-4 py-3 text-[#172b68] outline-none focus:border-[#00bddf] md:max-w-md"
             >
-              <option>Français</option>
-              <option>English</option>
+              <option value="Français">Français</option>
+              <option value="English">English</option>
             </select>
           </section>
 
@@ -265,7 +302,6 @@ export default function SettingsPage() {
               />
             </div>
           </section>
-
         </div>
       </div>
     </main>
