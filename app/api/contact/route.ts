@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 export async function POST(request: Request) {
@@ -30,7 +30,8 @@ export async function POST(request: Request) {
 
     const contact = await prisma.contact.create({
       data: {
-        name: `${cleanFirstName} ${cleanLastName}`,
+        firstName: cleanFirstName,
+        lastName: cleanLastName,
         email: cleanEmail,
         phone: phone ? String(phone).trim() : null,
         company: company ? String(company).trim() : null,
