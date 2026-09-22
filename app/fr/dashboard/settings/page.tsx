@@ -25,6 +25,69 @@ const DEFAULT_SETTINGS: SettingsData = {
   notifications: true,
 };
 
+const STORAGE_KEY = "bringo-settings";
+const COOKIE_KEY = "bringo-settings";
+
+function loadSettings(): SettingsData {
+  try {
+    const local = localStorage.getItem(STORAGE_KEY);
+
+    if (local) {
+      const parsed = JSON.parse(local);
+
+      return {
+        name: parsed.name ?? DEFAULT_SETTINGS.name,
+        email: parsed.email ?? DEFAULT_SETTINGS.email,
+        language: parsed.language ?? DEFAULT_SETTINGS.language,
+        notifications:
+          typeof parsed.notifications === "boolean"
+            ? parsed.notifications
+            : DEFAULT_SETTINGS.notifications,
+      };
+    }
+
+    const cookies = document.cookie.split("; ");
+
+    const cookie = cookies.find((item) =>
+      item.startsWith(`${COOKIE_KEY}=`)
+    );
+
+    if (cookie) {
+      const value = cookie.substring(COOKIE_KEY.length + 1);
+
+      const parsed = JSON.parse(decodeURIComponent(value));
+
+      return {
+        name: parsed.name ?? DEFAULT_SETTINGS.name,
+        email: parsed.email ?? DEFAULT_SETTINGS.email,
+        language: parsed.language ?? DEFAULT_SETTINGS.language,
+        notifications:
+          typeof parsed.notifications === "boolean"
+            ? parsed.notifications
+            : DEFAULT_SETTINGS.notifications,
+      };
+    }
+  } catch (error) {
+    console.error("SETTINGS_LOAD_ERROR:", error);
+  }
+
+  return DEFAULT_SETTINGS;
+}
+
+function savePersistentSettings(settings: SettingsData) {
+  try {
+    const serialized = JSON.stringify(settings);
+
+    localStorage.setItem(STORAGE_KEY, serialized);
+
+    document.cookie = `${COOKIE_KEY}=${encodeURIComponent(
+      serialized
+    )}; path=/; max-age=31536000; SameSite=Lax`;
+  } catch (error) {
+    console.error("SETTINGS_SAVE_ERROR:", error);
+  }
+}
+
 export default function SettingsPage() {
   const [name, setName] = useState(DEFAULT_SETTINGS.name);
   const [email, setEmail] = useState(DEFAULT_SETTINGS.email);
@@ -32,25 +95,19 @@ export default function SettingsPage() {
   const [notifications, setNotifications] = useState(
     DEFAULT_SETTINGS.notifications
   );
+
   const [saved, setSaved] = useState(false);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem("bringo-settings");
+    const settings = loadSettings();
 
-      if (!stored) return;
+    setName(settings.name);
+    setEmail(settings.email);
+    setLanguage(settings.language);
+    setNotifications(settings.notifications);
 
-      const settings = JSON.parse(stored) as Partial<SettingsData>;
-
-      setName(settings.name ?? DEFAULT_SETTINGS.name);
-      setEmail(settings.email ?? DEFAULT_SETTINGS.email);
-      setLanguage(settings.language ?? DEFAULT_SETTINGS.language);
-      setNotifications(
-        settings.notifications ?? DEFAULT_SETTINGS.notifications
-      );
-    } catch (error) {
-      console.error("SETTINGS_LOAD_ERROR:", error);
-    }
+    setLoaded(true);
   }, []);
 
   function saveSettings() {
@@ -61,10 +118,11 @@ export default function SettingsPage() {
       notifications,
     };
 
-    localStorage.setItem("bringo-settings", JSON.stringify(settings));
+    savePersistentSettings(settings);
 
     setName(settings.name);
     setEmail(settings.email);
+
     setSaved(true);
 
     setTimeout(() => {
@@ -72,9 +130,24 @@ export default function SettingsPage() {
     }, 2500);
   }
 
+  if (!loaded) {
+    return (
+      <main className="min-h-screen bg-[#f7f9fc] px-6 py-10 lg:px-10">
+        <div className="mx-auto max-w-5xl">
+          <div className="rounded-3xl border border-[#e1e7f0] bg-white p-10 text-center shadow-sm">
+            <p className="font-semibold text-[#64789d]">
+              Chargement des paramètres...
+            </p>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-[#f7f9fc] px-6 py-10 lg:px-10">
       <div className="mx-auto max-w-5xl">
+
         {/* HEADER */}
         <div className="mb-10 flex flex-col justify-between gap-5 md:flex-row md:items-center">
           <div className="flex items-center gap-4">
@@ -119,6 +192,7 @@ export default function SettingsPage() {
         )}
 
         <div className="space-y-6">
+
           {/* ACCOUNT */}
           <section className="rounded-3xl border border-[#e1e7f0] bg-white p-7 shadow-sm">
             <div className="mb-7 flex items-center gap-3">
@@ -138,6 +212,7 @@ export default function SettingsPage() {
             </div>
 
             <div className="grid gap-5 md:grid-cols-2">
+
               <div>
                 <label className="mb-2 block text-sm font-bold text-[#172b68]">
                   Nom
@@ -163,6 +238,7 @@ export default function SettingsPage() {
                   className="w-full rounded-xl border border-[#dce4ef] bg-white px-4 py-3 text-[#172b68] outline-none transition focus:border-[#00bddf] focus:ring-2 focus:ring-[#00bddf]/10"
                 />
               </div>
+
             </div>
           </section>
 
@@ -186,6 +262,7 @@ export default function SettingsPage() {
 
             <div className="rounded-2xl bg-[#f7f9fc] p-5">
               <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+
                 <div>
                   <p className="font-bold text-[#172b68]">
                     Mot de passe administrateur
@@ -200,6 +277,7 @@ export default function SettingsPage() {
                 <span className="rounded-full bg-green-100 px-4 py-2 text-sm font-bold text-green-700">
                   Protégé
                 </span>
+
               </div>
             </div>
           </section>
@@ -207,6 +285,7 @@ export default function SettingsPage() {
           {/* NOTIFICATIONS */}
           <section className="rounded-3xl border border-[#e1e7f0] bg-white p-7 shadow-sm">
             <div className="mb-7 flex items-center gap-3">
+
               <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#fff8e8]">
                 <Bell className="h-5 w-5 text-[#ff9f00]" />
               </div>
@@ -220,9 +299,11 @@ export default function SettingsPage() {
                   Gérez les notifications du dashboard.
                 </p>
               </div>
+
             </div>
 
             <div className="flex items-center justify-between gap-5">
+
               <div>
                 <p className="font-bold text-[#172b68]">
                   Notifications administrateur
@@ -239,21 +320,28 @@ export default function SettingsPage() {
                 aria-pressed={notifications}
                 onClick={() => setNotifications(!notifications)}
                 className={`relative h-7 w-12 rounded-full transition ${
-                  notifications ? "bg-[#00bddf]" : "bg-gray-300"
+                  notifications
+                    ? "bg-[#00bddf]"
+                    : "bg-gray-300"
                 }`}
               >
                 <span
                   className={`absolute top-1 h-5 w-5 rounded-full bg-white shadow transition ${
-                    notifications ? "left-6" : "left-1"
+                    notifications
+                      ? "left-6"
+                      : "left-1"
                   }`}
                 />
               </button>
+
             </div>
           </section>
 
           {/* LANGUAGE */}
           <section className="rounded-3xl border border-[#e1e7f0] bg-white p-7 shadow-sm">
+
             <div className="mb-7 flex items-center gap-3">
+
               <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#eefaff]">
                 <Globe className="h-5 w-5 text-[#00bddf]" />
               </div>
@@ -267,6 +355,7 @@ export default function SettingsPage() {
                   Choisissez la langue de votre interface.
                 </p>
               </div>
+
             </div>
 
             <select
@@ -274,18 +363,26 @@ export default function SettingsPage() {
               onChange={(e) => setLanguage(e.target.value)}
               className="w-full rounded-xl border border-[#dce4ef] bg-white px-4 py-3 text-[#172b68] outline-none focus:border-[#00bddf] md:max-w-md"
             >
-              <option value="Français">Français</option>
-              <option value="English">English</option>
+              <option value="Français">
+                Français
+              </option>
+
+              <option value="English">
+                English
+              </option>
             </select>
+
           </section>
 
           {/* SYSTEM STATUS */}
           <section className="rounded-3xl border border-[#e1e7f0] bg-white p-7 shadow-sm">
+
             <h2 className="mb-6 text-xl font-extrabold text-[#172b68]">
               État du système
             </h2>
 
             <div className="grid gap-4 md:grid-cols-3">
+
               <Status
                 label="Base de données"
                 status="Opérationnelle"
@@ -300,8 +397,10 @@ export default function SettingsPage() {
                 label="CRM"
                 status="Opérationnel"
               />
+
             </div>
           </section>
+
         </div>
       </div>
     </main>
@@ -317,6 +416,7 @@ function Status({
 }) {
   return (
     <div className="flex items-center justify-between rounded-2xl bg-[#f7f9fc] p-4">
+
       <span className="text-sm font-semibold text-[#64789d]">
         {label}
       </span>
@@ -325,6 +425,7 @@ function Status({
         <span className="h-2.5 w-2.5 rounded-full bg-green-500" />
         {status}
       </span>
+
     </div>
   );
 }
