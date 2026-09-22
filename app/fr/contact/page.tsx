@@ -30,6 +30,7 @@ export default function FrenchContactPage() {
     const lastName = nameParts.slice(1).join(" ") || firstName;
 
     const email = String(formData.get("email") || "").trim();
+    const phone = String(formData.get("phone") || "").trim();
     const company = String(formData.get("company") || "").trim();
     const need = String(formData.get("need") || "").trim();
     const message = String(formData.get("message") || "").trim();
@@ -44,6 +45,7 @@ export default function FrenchContactPage() {
           firstName,
           lastName,
           email,
+          phone,
           company,
           message: `Besoin : ${need}\n\n${message}`,
         }),
@@ -106,6 +108,7 @@ export default function FrenchContactPage() {
                     <p className="text-xs font-bold uppercase tracking-wide text-slate-400">
                       Email
                     </p>
+
                     <p className="mt-1 font-semibold text-blue-950">
                       contact@bringo.ma
                     </p>
@@ -121,6 +124,7 @@ export default function FrenchContactPage() {
                     <p className="text-xs font-bold uppercase tracking-wide text-slate-400">
                       Téléphone
                     </p>
+
                     <p className="mt-1 font-semibold text-blue-950">
                       Disponible sur demande
                     </p>
@@ -136,6 +140,7 @@ export default function FrenchContactPage() {
                     <p className="text-xs font-bold uppercase tracking-wide text-slate-400">
                       Localisation
                     </p>
+
                     <p className="mt-1 font-semibold text-blue-950">
                       Maroc & Europe
                     </p>
@@ -163,6 +168,7 @@ export default function FrenchContactPage() {
                   </div>
 
                   <form onSubmit={handleSubmit} className="space-y-5">
+                    {/* NOM */}
                     <div>
                       <label
                         htmlFor="name"
@@ -181,6 +187,7 @@ export default function FrenchContactPage() {
                       />
                     </div>
 
+                    {/* EMAIL */}
                     <div>
                       <label
                         htmlFor="email"
@@ -199,6 +206,26 @@ export default function FrenchContactPage() {
                       />
                     </div>
 
+                    {/* TELEPHONE */}
+                    <div>
+                      <label
+                        htmlFor="phone"
+                        className="mb-2 block text-sm font-semibold text-blue-950"
+                      >
+                        Téléphone
+                      </label>
+
+                      <input
+                        id="phone"
+                        name="phone"
+                        type="tel"
+                        placeholder="+212 6 XX XX XX XX"
+                        autoComplete="tel"
+                        className="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-blue-950 outline-none transition placeholder:text-slate-400 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100"
+                      />
+                    </div>
+
+                    {/* ENTREPRISE */}
                     <div>
                       <label
                         htmlFor="company"
@@ -216,6 +243,7 @@ export default function FrenchContactPage() {
                       />
                     </div>
 
+                    {/* BESOIN */}
                     <div>
                       <label
                         htmlFor="need"
@@ -234,24 +262,30 @@ export default function FrenchContactPage() {
                         <option value="" disabled>
                           Sélectionnez votre besoin
                         </option>
+
                         <option value="acquisition">
                           Acquisition client
                         </option>
+
                         <option value="ai-search">
                           Recherche IA / GEO
                         </option>
+
                         <option value="conversion">
                           Optimisation de la conversion
                         </option>
+
                         <option value="automation">
                           Automatisation
                         </option>
+
                         <option value="other">
                           Autre
                         </option>
                       </select>
                     </div>
 
+                    {/* MESSAGE */}
                     <div>
                       <label
                         htmlFor="message"
@@ -281,7 +315,10 @@ export default function FrenchContactPage() {
                       disabled={loading}
                       className="flex w-full items-center justify-center gap-3 rounded-lg bg-blue-950 px-6 py-4 text-sm font-bold text-white shadow-lg transition hover:bg-blue-900 disabled:cursor-not-allowed disabled:opacity-60"
                     >
-                      {loading ? "Envoi en cours..." : "Envoyer ma demande"}
+                      {loading
+                        ? "Envoi en cours..."
+                        : "Envoyer ma demande"}
+
                       {!loading && <ArrowRight size={18} />}
                     </button>
                   </form>
