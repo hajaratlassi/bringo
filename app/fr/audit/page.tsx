@@ -36,33 +36,35 @@ type AuditResult = {
 };
 
 const CHECK_LABELS: Record<string, string> = {
-  title: "Balise Title",
+  title: "Title SEO",
   metaDescription: "Meta description",
   description: "Meta description",
-  h1: "Structure H1",
-  h1Count: "Structure H1",
-  imagesAlt: "Images avec attribut ALT",
-  imageAlt: "Images avec attribut ALT",
-  alt: "Images avec attribut ALT",
+  h1: "H1 principal",
+  h1Count: "H1 principal",
+  imagesAlt: "Images avec ALT",
+  imageAlt: "Images avec ALT",
+  alt: "Images avec ALT",
   links: "Liens internes",
   internalLinks: "Liens internes",
-  https: "Connexion HTTPS",
-  ssl: "Connexion HTTPS",
-  canonical: "URL canonique",
+  https: "HTTPS",
+  ssl: "HTTPS",
+  canonical: "URL Canonical",
   robots: "Robots.txt",
   robotsTxt: "Robots.txt",
   sitemap: "Sitemap XML",
   sitemapXml: "Sitemap XML",
+  language: "Langue HTML",
+  htmlLang: "Langue HTML",
 };
 
 const CHECK_LABELS_BY_INDEX = [
-  "Balise Title",
+  "HTTPS",
+  "Title SEO",
   "Meta description",
-  "Structure H1",
-  "Images avec attribut ALT",
-  "Liens internes",
-  "Connexion HTTPS",
-  "URL canonique",
+  "H1 principal",
+  "Images avec ALT",
+  "URL Canonical",
+  "Langue HTML",
   "Robots.txt",
   "Sitemap XML",
 ];
@@ -89,7 +91,8 @@ function getCheckLabel(check: AuditCheck, index: number) {
     return title;
   }
 
-  const key = typeof check?.key === "string" ? check.key.trim() : "";
+  const key =
+    typeof check?.key === "string" ? check.key.trim() : "";
 
   if (key && CHECK_LABELS[key]) {
     return CHECK_LABELS[key];
@@ -140,7 +143,8 @@ function isCheckPassed(check: AuditCheck) {
     status === "passed" ||
     status === "success" ||
     status === "good" ||
-    status === "ok"
+    status === "ok" ||
+    status === "correct"
   );
 }
 
@@ -170,7 +174,9 @@ export default function AuditPage() {
   const [error, setError] = useState("");
   const [result, setResult] = useState<AuditResult | null>(null);
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(
+    event: FormEvent<HTMLFormElement>
+  ) {
     event.preventDefault();
 
     setError("");
@@ -217,30 +223,30 @@ export default function AuditPage() {
         );
       }
 
-      const audit =
-        data?.audit ??
-        data?.result ??
-        data;
+      const audit = data?.audit ?? data?.result ?? data;
 
       setResult({
         score:
           typeof audit?.score === "number"
             ? audit.score
             : 0,
+
         status:
           typeof audit?.status === "string"
             ? audit.status
             : "",
+
         summary:
           typeof audit?.summary === "string"
             ? audit.summary
             : "",
+
         website:
-          audit?.website ??
-          url,
+          audit?.website ?? url,
+
         finalUrl:
-          audit?.finalUrl ??
-          url,
+          audit?.finalUrl ?? url,
+
         checks: Array.isArray(audit?.checks)
           ? audit.checks
           : [],
@@ -272,95 +278,13 @@ export default function AuditPage() {
 
   return (
     <main className="min-h-screen bg-white text-[#17265f]">
-      {/* NAVBAR */}
-      <header className="sticky top-0 z-50 border-b border-slate-100 bg-white/95 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8">
-          <Link
-            href="/fr"
-            className="flex items-center gap-3"
-          >
-            <div className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-cyan-400 bg-white text-xl font-black text-[#17265f]">
-              B
-            </div>
-
-            <div>
-              <div className="text-xl font-black tracking-[0.18em] text-[#17265f]">
-                BRINGO
-              </div>
-
-              <div className="text-[9px] font-bold uppercase tracking-[0.25em] text-cyan-500">
-                Customer Acquisition
-              </div>
-            </div>
-          </Link>
-
-          <nav className="hidden items-center gap-7 lg:flex">
-            <Link
-              href="/fr/solutions"
-              className="font-semibold text-[#17265f] transition hover:text-cyan-500"
-            >
-              Solutions
-            </Link>
-
-            <Link
-              href="/fr/solutions/ai-search"
-              className="font-semibold text-[#17265f] transition hover:text-cyan-500"
-            >
-              Recherche IA (GEO)
-            </Link>
-
-            <Link
-              href="/fr/industries"
-              className="font-semibold text-[#17265f] transition hover:text-cyan-500"
-            >
-              Secteurs
-            </Link>
-
-            <Link
-              href="/fr/case-studies"
-              className="font-semibold text-[#17265f] transition hover:text-cyan-500"
-            >
-              Études de cas
-            </Link>
-
-            <Link
-              href="/fr/insights"
-              className="font-semibold text-[#17265f] transition hover:text-cyan-500"
-            >
-              Insights
-            </Link>
-
-            <Link
-              href="/fr/company"
-              className="font-semibold text-[#17265f] transition hover:text-cyan-500"
-            >
-              Entreprise
-            </Link>
-          </nav>
-
-          <Link
-            href="/fr/audit"
-            className="hidden items-center gap-2 rounded-xl bg-[#12265f] px-5 py-3 font-bold text-white shadow-lg shadow-[#12265f]/20 transition hover:-translate-y-0.5 lg:flex"
-          >
-            Obtenir mon audit gratuit
-            <ArrowRight className="h-4 w-4" />
-          </Link>
-
-          <button
-            type="button"
-            className="rounded-xl border border-slate-200 p-3 lg:hidden"
-            aria-label="Menu"
-          >
-            <span className="text-xl">☰</span>
-          </button>
-        </div>
-      </header>
 
       {/* HERO */}
       <section className="relative overflow-hidden bg-[#f8fcff] px-5 py-20 lg:px-8 lg:py-28">
         <div className="absolute left-0 top-20 h-72 w-72 rounded-full bg-cyan-200/20 blur-3xl" />
 
         <div className="relative mx-auto max-w-5xl text-center">
+
           <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-cyan-200 bg-cyan-50 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-cyan-600">
             <ShieldCheck className="h-4 w-4" />
             Audit digital gratuit
@@ -385,6 +309,7 @@ export default function AuditPage() {
             className="mx-auto mt-10 max-w-3xl"
           >
             <div className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-3 shadow-xl shadow-slate-200/50 sm:flex-row">
+
               <div className="flex flex-1 items-center gap-3 rounded-xl bg-slate-50 px-4">
                 <Globe className="h-5 w-5 shrink-0 text-cyan-500" />
 
@@ -432,6 +357,7 @@ export default function AuditPage() {
       {result && (
         <section className="bg-white px-5 py-16 lg:px-8">
           <div className="mx-auto max-w-5xl">
+
             {/* WEBSITE */}
             <div className="mb-8 text-center">
               <p className="text-sm font-bold uppercase tracking-[0.18em] text-cyan-500">
@@ -447,7 +373,9 @@ export default function AuditPage() {
 
             {/* SCORE */}
             <div className="overflow-hidden rounded-3xl bg-[#172b68] p-8 text-white shadow-2xl sm:p-12">
+
               <div className="text-center">
+
                 <div className="relative mx-auto flex h-44 w-44 items-center justify-center rounded-full border-[12px] border-cyan-400">
                   <div className="text-center">
                     <div className="text-5xl font-black">
@@ -472,13 +400,16 @@ export default function AuditPage() {
                   {result.summary ||
                     "Votre site présente plusieurs opportunités importantes pour améliorer votre visibilité, votre conversion et votre acquisition."}
                 </p>
+
               </div>
 
-              {/* CHECK SUMMARY */}
+              {/* SUMMARY */}
               {checks.length > 0 && (
                 <div className="mt-10 grid gap-4 sm:grid-cols-2">
+
                   <div className="rounded-2xl bg-white/10 p-5">
                     <div className="flex items-center gap-3">
+
                       <CheckCircle2 className="h-6 w-6 text-emerald-400" />
 
                       <div>
@@ -490,11 +421,13 @@ export default function AuditPage() {
                           Points corrects
                         </p>
                       </div>
+
                     </div>
                   </div>
 
                   <div className="rounded-2xl bg-white/10 p-5">
                     <div className="flex items-center gap-3">
+
                       <AlertTriangle className="h-6 w-6 text-yellow-400" />
 
                       <div>
@@ -506,19 +439,23 @@ export default function AuditPage() {
                           Points à améliorer
                         </p>
                       </div>
+
                     </div>
                   </div>
+
                 </div>
               )}
 
-              {/* CHECKS */}
+              {/* DETAILED CHECKS */}
               {checks.length > 0 && (
                 <div className="mt-10 rounded-3xl border border-cyan-400/40 bg-[#20366f] p-5 sm:p-7">
+
                   <h3 className="mb-5 text-xl font-black text-cyan-400">
                     Analyse détaillée
                   </h3>
 
                   <div className="space-y-3">
+
                     {checks.map((check, index) => {
                       const passed = isCheckPassed(check);
 
@@ -527,7 +464,9 @@ export default function AuditPage() {
                           key={`${check.key ?? "check"}-${index}`}
                           className="flex items-center justify-between gap-4 rounded-xl bg-white/10 px-4 py-4"
                         >
+
                           <div className="flex min-w-0 items-center gap-3">
+
                             {passed ? (
                               <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-400" />
                             ) : (
@@ -535,6 +474,7 @@ export default function AuditPage() {
                             )}
 
                             <div className="min-w-0">
+
                               <p className="font-semibold text-white">
                                 {getCheckLabel(check, index)}
                               </p>
@@ -542,6 +482,7 @@ export default function AuditPage() {
                               <p className="mt-1 text-xs text-white/60">
                                 {getCheckDescription(check)}
                               </p>
+
                             </div>
                           </div>
 
@@ -556,9 +497,11 @@ export default function AuditPage() {
                               ? "Correct"
                               : "À améliorer"}
                           </span>
+
                         </div>
                       );
                     })}
+
                   </div>
                 </div>
               )}
@@ -569,10 +512,12 @@ export default function AuditPage() {
                   par l'analyse.
                 </div>
               )}
+
             </div>
 
             {/* CTA */}
             <div className="mt-10 rounded-3xl border border-slate-200 bg-slate-50 p-8 text-center">
+
               <h3 className="text-2xl font-black text-[#17265f]">
                 Vous voulez aller plus loin ?
               </h3>
@@ -590,7 +535,9 @@ export default function AuditPage() {
                 Parler à un expert
                 <ArrowRight className="h-4 w-4" />
               </Link>
+
             </div>
+
           </div>
         </section>
       )}
@@ -598,8 +545,11 @@ export default function AuditPage() {
       {/* EMPTY STATE */}
       {!result && !loading && (
         <section className="px-5 py-16 lg:px-8">
+
           <div className="mx-auto grid max-w-6xl gap-6 md:grid-cols-3">
+
             <div className="rounded-2xl border border-slate-200 bg-white p-7 shadow-sm">
+
               <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-50">
                 <Search className="h-6 w-6 text-cyan-500" />
               </div>
@@ -612,9 +562,11 @@ export default function AuditPage() {
                 Vérifiez les éléments qui influencent la
                 visibilité de votre site.
               </p>
+
             </div>
 
             <div className="rounded-2xl border border-slate-200 bg-white p-7 shadow-sm">
+
               <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50">
                 <Globe className="h-6 w-6 text-indigo-500" />
               </div>
@@ -627,9 +579,11 @@ export default function AuditPage() {
                 Analysez les principaux éléments techniques
                 de votre référencement.
               </p>
+
             </div>
 
             <div className="rounded-2xl border border-slate-200 bg-white p-7 shadow-sm">
+
               <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50">
                 <ShieldCheck className="h-6 w-6 text-emerald-500" />
               </div>
@@ -642,20 +596,26 @@ export default function AuditPage() {
                 Identifiez les opportunités d'amélioration de
                 votre présence digitale.
               </p>
+
             </div>
+
           </div>
+
         </section>
       )}
 
       {/* FOOTER */}
       <footer className="border-t border-slate-100 bg-white px-5 py-10">
+
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-5 text-sm text-slate-500 md:flex-row">
+
           <p>
             © {new Date().getFullYear()} BRINGO. Tous droits
             réservés.
           </p>
 
           <div className="flex gap-5">
+
             <Link
               href="/fr/privacy"
               className="hover:text-[#17265f]"
@@ -669,9 +629,13 @@ export default function AuditPage() {
             >
               Conditions
             </Link>
+
           </div>
+
         </div>
+
       </footer>
+
     </main>
   );
 }
