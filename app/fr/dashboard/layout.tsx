@@ -16,11 +16,13 @@ export default async function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-slate-50">
+      {/* ADMIN SIDEBAR */}
       <AdminSidebar />
 
-      <div className="lg:pl-64">
+      {/* ADMIN CONTENT */}
+      <main className="lg:pl-64 min-h-screen">
         {children}
-      </div>
+      </main>
     </div>
   );
 }
