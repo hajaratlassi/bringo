@@ -61,7 +61,7 @@ const auditItems = [
 
 type AuditCheck = {
   key: string;
-  label: string;
+  label?: string | null;
   ok: boolean;
 };
 
@@ -80,6 +80,47 @@ type AuditResult = {
     imagesWithoutAlt: number;
   };
 };
+
+const CHECK_LABELS: Record<string, string> = {
+  https: "Connexion HTTPS sécurisée",
+  title: "Balise Title",
+  metaDescription: "Meta description",
+  description: "Meta description",
+  h1: "Structure H1",
+  h1Count: "Structure H1",
+  imagesAlt: "Images avec attribut ALT",
+  alt: "Images avec attribut ALT",
+  links: "Liens internes",
+  robots: "Robots.txt",
+  sitemap: "Sitemap XML",
+  canonical: "URL canonique",
+  mobile: "Optimisation mobile",
+  performance: "Performance du site",
+};
+
+function getCheckLabel(check: AuditCheck, index: number) {
+  if (check.label && check.label.trim()) {
+    return check.label;
+  }
+
+  if (CHECK_LABELS[check.key]) {
+    return CHECK_LABELS[check.key];
+  }
+
+  const normalizedKey = check.key
+    .toLowerCase()
+    .replace(/[-_\s]/g, "");
+
+  const matchingKey = Object.keys(CHECK_LABELS).find(
+    (key) => key.toLowerCase().replace(/[-_\s]/g, "") === normalizedKey
+  );
+
+  if (matchingKey) {
+    return CHECK_LABELS[matchingKey];
+  }
+
+  return `Analyse technique ${index + 1}`;
+}
 
 export default function FrenchAuditPage() {
   const [website, setWebsite] = useState("");
@@ -163,6 +204,7 @@ export default function FrenchAuditPage() {
       <section className="border-b border-slate-100 bg-gradient-to-b from-white to-cyan-50/30 py-20 lg:py-28">
         <div className="mx-auto max-w-[1400px] px-6 lg:px-10">
           <div className="grid items-center gap-14 lg:grid-cols-2">
+
             {/* LEFT */}
             <div>
               <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-cyan-200 bg-cyan-50 px-4 py-2 text-sm font-bold uppercase tracking-wider text-cyan-600">
@@ -224,6 +266,7 @@ export default function FrenchAuditPage() {
               className="rounded-3xl border border-cyan-100 bg-white p-5 shadow-2xl sm:p-7"
             >
               <div className="rounded-2xl bg-blue-950 p-6 sm:p-8">
+
                 <div className="flex items-center gap-3">
                   <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-500/10">
                     <Sparkles
@@ -266,9 +309,7 @@ export default function FrenchAuditPage() {
                       id="website"
                       type="url"
                       value={website}
-                      onChange={(e) =>
-                        setWebsite(e.target.value)
-                      }
+                      onChange={(e) => setWebsite(e.target.value)}
                       onKeyDown={(e) => {
                         if (e.key === "Enter") {
                           handleAudit();
@@ -314,6 +355,7 @@ export default function FrenchAuditPage() {
                 {/* RESULT */}
                 {result && !loading && (
                   <div className="mt-6 rounded-2xl border border-cyan-400/20 bg-white/5 p-6">
+
                     <div className="text-center">
                       <p className="text-sm font-medium text-slate-300">
                         Analyse terminée pour :
@@ -345,29 +387,82 @@ export default function FrenchAuditPage() {
                     </div>
 
                     {/* CHECKS */}
-                    <div className="mt-6 space-y-2">
-                      {result.checks.map((check) => (
-                        <div
-                          key={check.key}
-                          className="flex items-center justify-between rounded-lg bg-white/5 px-3 py-2"
-                        >
-                          <span className="text-sm text-slate-300">
-                            {check.label}
-                          </span>
-
-                          {check.ok ? (
-                            <Check
-                              size={17}
-                              className="text-cyan-400"
-                            />
-                          ) : (
-                            <span className="text-xs font-bold text-amber-400">
-                              À améliorer
+                    {result.checks && result.checks.length > 0 && (
+                      <div className="mt-6 space-y-2">
+                        {result.checks.map((check, index) => (
+                          <div
+                            key={`${check.key}-${index}`}
+                            className="flex items-center justify-between gap-4 rounded-lg bg-white/5 px-4 py-3"
+                          >
+                            <span className="text-sm text-slate-200">
+                              {getCheckLabel(check, index)}
                             </span>
-                          )}
+
+                            {check.ok ? (
+                              <div className="flex shrink-0 items-center gap-2">
+                                <Check
+                                  size={17}
+                                  className="text-cyan-400"
+                                />
+
+                                <span className="text-xs font-bold text-cyan-400">
+                                  OK
+                                </span>
+                              </div>
+                            ) : (
+                              <span className="shrink-0 text-xs font-bold text-amber-400">
+                                À améliorer
+                              </span>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* SUMMARY */}
+                    {result.summary && (
+                      <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                        <div className="rounded-xl bg-white/5 p-4">
+                          <p className="text-xs text-slate-400">
+                            H1 détectés
+                          </p>
+
+                          <p className="mt-1 text-xl font-bold text-white">
+                            {result.summary.h1Count}
+                          </p>
                         </div>
-                      ))}
-                    </div>
+
+                        <div className="rounded-xl bg-white/5 p-4">
+                          <p className="text-xs text-slate-400">
+                            Liens détectés
+                          </p>
+
+                          <p className="mt-1 text-xl font-bold text-white">
+                            {result.summary.links}
+                          </p>
+                        </div>
+
+                        <div className="rounded-xl bg-white/5 p-4">
+                          <p className="text-xs text-slate-400">
+                            Images
+                          </p>
+
+                          <p className="mt-1 text-xl font-bold text-white">
+                            {result.summary.imagesCount}
+                          </p>
+                        </div>
+
+                        <div className="rounded-xl bg-white/5 p-4">
+                          <p className="text-xs text-slate-400">
+                            Images sans ALT
+                          </p>
+
+                          <p className="mt-1 text-xl font-bold text-white">
+                            {result.summary.imagesWithoutAlt}
+                          </p>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
