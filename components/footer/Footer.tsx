@@ -157,7 +157,7 @@ export default function Footer() {
 
             <Link
               href={isFrench ? "/fr#audit" : "/#audit"}
-              className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[#0b2454] px-5 py-3 text-sm font-bold text-white transition hover:bg-cyan-500"
+              className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[#0b2454] px-5 py-3 text-sm font-bold !text-white transition hover:bg-cyan-500"
             >
               {text.audit}
               <ArrowUpRight size={17} />
