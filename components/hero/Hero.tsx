@@ -20,8 +20,8 @@ export default function Hero() {
     ? {
         badge: "Acquisition client propulsée par l’IA",
 
-        title1: "Le client",
-        title2: "Nous attirons",
+        title1: "The customer",
+        title2: "We bring",
 
         subtitle:
           "Systèmes d’acquisition client propulsés par l’IA",
