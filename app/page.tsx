@@ -8,18 +8,27 @@ import CaseStudies from "@/components/case-studies/CaseStudies";
 import Audit from "@/components/audit/Audit";
 import Insights from "@/components/insights/Insights";
 
+import Navbar from "@/components/navbar/Navbar";
+import Footer from "@/components/footer/Footer";
+
 export default function Home() {
   return (
-    <main>
-      <Hero />
-      <Partners />
-      <BringoSystem />
-      <AISearch />
-      <Solutions />
-      <Impact />
-      <CaseStudies />
-      <Audit />
-      <Insights />
-    </main>
+    <>
+      <Navbar />
+
+      <main>
+        <Hero />
+        <Partners />
+        <BringoSystem />
+        <AISearch />
+        <Solutions />
+        <Impact />
+        <CaseStudies />
+        <Audit />
+        <Insights />
+      </main>
+
+      <Footer />
+    </>
   );
 }
